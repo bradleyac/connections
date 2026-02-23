@@ -4,3 +4,8 @@
 :root {
   color-scheme: light dark;
 }
+
+button,
+a {
+  touch-action: manipulation;
+}
