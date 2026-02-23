@@ -1,0 +1,6 @@
+@import 'tailwindcss';
+@plugin '@tailwindcss/forms';
+
+:root {
+  color-scheme: light dark;
+}
