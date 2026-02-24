@@ -110,7 +110,7 @@
 										category === 'white' && 'bg-transparent outline'
 									]}
 								>
-									<span class={['block', category === 'white' && 'hidden']}
+									<span class={['block font-mono', category === 'white' && 'hidden']}
 										>{colorCounts[category]}</span
 									>
 									<svg
