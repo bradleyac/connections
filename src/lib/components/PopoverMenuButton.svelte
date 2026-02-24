@@ -33,7 +33,6 @@
 	}
 
 	function closePopover() {
-		console.log(visible);
 		if (visible) {
 			opened = null;
 			return true;
@@ -69,7 +68,6 @@
 	$effect(() => {
 		return on(document, 'click', (e) => {
 			if (!popover?.contains(e.target as Node) && !button?.contains(e.target as Node)) {
-				console.log('closing');
 				if (closePopover()) {
 					e.stopPropagation();
 				}
