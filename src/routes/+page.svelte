@@ -81,9 +81,24 @@
 							ofColors([color as category]).forEach((word) => (colors[word] = 'white'))}
 						title={`Clear ${color}`}
 						class={[
-							'text-mono invisible absolute -top-1 -right-1 z-1 h-[22px] w-[22px] rounded rounded-full bg-neutral-500 text-xs outline',
+							'text-mono invisible absolute -top-1 -right-1 z-1 h-[22px] w-[22px] rounded rounded-full bg-gray-200 p-1 text-xs outline dark:bg-gray-800',
 							count > 0 && 'visible'
-						]}>x</button
+						]}
+						><svg
+							fill="currentColor"
+							viewBox="0 0 256 256"
+							id="Flat"
+							xmlns="http://www.w3.org/2000/svg"
+							><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g
+								id="SVGRepo_tracerCarrier"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+							></g><g id="SVGRepo_iconCarrier">
+								<path
+									d="M202.82861,197.17188a3.99991,3.99991,0,1,1-5.65722,5.65624L128,133.65723,58.82861,202.82812a3.99991,3.99991,0,0,1-5.65722-5.65624L122.343,128,53.17139,58.82812a3.99991,3.99991,0,0,1,5.65722-5.65624L128,122.34277l69.17139-69.17089a3.99991,3.99991,0,0,1,5.65722,5.65624L133.657,128Z"
+								></path>
+							</g></svg
+						></button
 					>
 				</div>
 			{/each}
