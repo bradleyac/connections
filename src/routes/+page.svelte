@@ -107,14 +107,14 @@
 										category === 'blue' && 'bg-blue-500',
 										category === 'green' && 'bg-green-500',
 										category === 'yellow' && 'bg-yellow-500',
-										category === 'white' && 'outline'
+										category === 'white' && 'bg-transparent outline'
 									]}
 								>
 									<span class={['block', category === 'white' && 'hidden']}
 										>{colorCounts[category]}</span
 									>
 									<svg
-										class={[category !== 'white' && 'hidden']}
+										class={['h-full w-full', category !== 'white' && 'hidden']}
 										fill="currentColor"
 										viewBox="0 0 256 256"
 										id="Flat"
