@@ -197,12 +197,12 @@
 						></button>
 					{/each}
 					<div
-						class="inert z-1 col-span-full row-span-full flex flex-col gap-0.5 place-self-center rounded text-xs"
+						class="inert z-1 col-span-full row-span-full flex flex-col gap-0.5 place-self-center text-xs"
 					>
 						{#each word.split(' ') as part}
 							<span
 								class={[
-									'z-1 col-span-full row-span-full place-self-center rounded px-0.5 text-xs',
+									'rounded px-0.5',
 									colors[word] === 'white' && 'bg-gray-300 dark:bg-gray-700'
 								]}>{part}</span
 							>
