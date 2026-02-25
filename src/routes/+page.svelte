@@ -184,19 +184,21 @@
 							title={`Toggle ${color}`}
 							style={`grid-area: ${colors[word] === color ? 'none' : color}`}
 							class={[
-								'invisible absolute h-[22px] w-[22px] cursor-pointer rounded outline',
+								'invisible absolute h-full w-full cursor-pointer',
 								colors[word] === 'white' && 'visible',
 								'disabled:invisible',
 								colors[word] === color
 									? 'grid-area-none visible z-2 col-span-full row-span-full h-full w-full bg-transparent outline-none'
-									: (color === 'purple' && 'bg-purple-500') ||
-										(color === 'blue' && 'bg-blue-500') ||
-										(color === 'green' && 'bg-green-500') ||
-										(color === 'yellow' && 'bg-yellow-500')
+									: (color === 'purple' && 'bg-purple-500/50') ||
+										(color === 'blue' && 'bg-blue-500/50') ||
+										(color === 'green' && 'bg-green-500/50') ||
+										(color === 'yellow' && 'bg-yellow-500/50')
 							]}
 						></button>
 					{/each}
-					<span class="col-span-full row-span-full place-self-center p-3 text-xs">{word}</span>
+					<span class="z-1 col-span-full row-span-full place-self-center rounded text-xs"
+						>{word}</span
+					>
 				</div>
 			{/each}
 		</div>
@@ -208,8 +210,8 @@
 		transition: background-color 0.3s;
 		display: grid;
 		grid-template:
-			'purple . blue' 22px
-			'. . .' 1fr
-			'green . yellow' 22px / 22px 1fr 22px;
+			'purple blue' 1fr
+			'green yellow' 1fr / 1fr 1fr;
+		overflow: hidden;
 	}
 </style>
