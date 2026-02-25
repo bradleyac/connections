@@ -189,16 +189,25 @@
 								'disabled:invisible',
 								colors[word] === color
 									? 'grid-area-none visible z-2 col-span-full row-span-full h-full w-full bg-transparent outline-none'
-									: (color === 'purple' && 'bg-purple-500/50') ||
-										(color === 'blue' && 'bg-blue-500/50') ||
-										(color === 'green' && 'bg-green-500/50') ||
-										(color === 'yellow' && 'bg-yellow-500/50')
+									: (color === 'purple' && 'bg-purple-500') ||
+										(color === 'blue' && 'bg-blue-500') ||
+										(color === 'green' && 'bg-green-500') ||
+										(color === 'yellow' && 'bg-yellow-500')
 							]}
 						></button>
 					{/each}
-					<span class="z-1 col-span-full row-span-full place-self-center rounded text-xs"
-						>{word}</span
+					<div
+						class="inert z-1 col-span-full row-span-full flex flex-col gap-0.5 place-self-center rounded text-xs"
 					>
+						{#each word.split(' ') as part}
+							<span
+								class={[
+									'z-1 col-span-full row-span-full place-self-center rounded px-0.5 text-xs',
+									colors[word] === 'white' && 'bg-gray-300 dark:bg-gray-700'
+								]}>{part}</span
+							>
+						{/each}
+					</div>
 				</div>
 			{/each}
 		</div>
