@@ -30,18 +30,15 @@
 		...Object.entries(colorCounts)
 			.filter(([color, count]) => color !== 'white' && count === 4)
 			.flatMap(([color, count]) => ofColors([color as category])),
-		...ofColors([
-			...Object.entries(colorCounts)
+		...ofColors(
+			Object.entries(colorCounts)
 				.filter(([color, count]) => color === 'white' || count !== 4)
 				.map(([color, count]) => color as category)
-		])
+		)
 	]);
 
 	$effect(() => {
-		colors = Object.fromEntries(data.connections.map((word) => [word, 'white'])) as Record<
-			string,
-			category
-		>;
+		colors = Object.fromEntries(data.connections.map((word) => [word, 'white']));
 	});
 
 	function swapColors(color1: category, color2: category) {
@@ -194,12 +191,12 @@
 						></button>
 					{/each}
 					<div
-						class="inert z-1 col-span-full row-span-full flex flex-col gap-0.5 place-self-center text-xs"
+						class="inert z-1 col-span-full row-span-full flex flex-col items-center gap-0.5 place-self-center text-xs"
 					>
 						{#each word.split(' ') as part}
 							<span
 								class={[
-									'rounded px-0.5',
+									'block w-min rounded px-0.5',
 									colors[word] === 'white' && 'bg-gray-300 dark:bg-gray-700'
 								]}>{part}</span
 							>
