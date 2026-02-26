@@ -26,16 +26,28 @@
 			.filter(([_, c]) => ofColors.includes(c))
 			.map(([word]) => word);
 	}
-	let words = $derived([
-		...Object.entries(colorCounts)
-			.filter(([color, count]) => color !== 'white' && count === 4)
-			.flatMap(([color, count]) => ofColors([color as category])),
-		...ofColors(
+	let unfinishedOrUncategorizedWords = $derived(
+		ofColors(
 			Object.entries(colorCounts)
 				.filter(([color, count]) => color === 'white' || count !== 4)
 				.map(([color, count]) => color as category)
 		)
-	]);
+	);
+	let words = $derived.by(() => {
+		let temp = unfinishedOrUncategorizedWords;
+		const rowLocations = [
+			['purple', 0],
+			['blue', 4],
+			['green', 8],
+			['yellow', 12]
+		] as const;
+		rowLocations.forEach(([color, index]) => {
+			if (colorCounts[color as category] === 4) {
+				temp.splice(index, 0, ...ofColors([color as category]));
+			}
+		});
+		return temp;
+	});
 
 	$effect(() => {
 		colors = Object.fromEntries(data.connections.map((word) => [word, 'white']));
@@ -129,32 +141,6 @@
 					{/snippet}
 
 					{count}
-					<button
-						onclick={(e) => {
-							e.stopPropagation();
-							ofColors([color as category]).forEach((word) => (colors[word] = 'white'));
-						}}
-						title={`Clear ${color}`}
-						class={[
-							'text-mono invisible absolute -top-1 -right-1 z-1 h-[22px] w-[22px] rounded rounded-full bg-gray-200 p-1 text-xs outline dark:bg-gray-800',
-							count > 0 && 'visible'
-						]}
-						><svg
-							fill="currentColor"
-							viewBox="0 0 256 256"
-							id="Flat"
-							xmlns="http://www.w3.org/2000/svg"
-							><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g
-								id="SVGRepo_tracerCarrier"
-								stroke-linecap="round"
-								stroke-linejoin="round"
-							></g><g id="SVGRepo_iconCarrier">
-								<path
-									d="M202.82861,197.17188a3.99991,3.99991,0,1,1-5.65722,5.65624L128,133.65723,58.82861,202.82812a3.99991,3.99991,0,0,1-5.65722-5.65624L122.343,128,53.17139,58.82812a3.99991,3.99991,0,0,1,5.65722-5.65624L128,122.34277l69.17139-69.17089a3.99991,3.99991,0,0,1,5.65722,5.65624L133.657,128Z"
-								></path>
-							</g></svg
-						></button
-					>
 				</PopoverMenuButton>
 			{/each}
 		</div>
