@@ -58,9 +58,6 @@
 </script>
 
 <svelte:boundary>
-	{#snippet pending()}
-		Loading...
-	{/snippet}
 	<div class="flex flex-col items-center gap-4 p-3">
 		<h1 class="text-2xl font-bold">NYT Connections</h1>
 		<input
