@@ -58,7 +58,7 @@
 	});
 
 	let colorsObj = $derived(
-		Object.fromEntries(colors.entries().map(([card, color]) => [card.value, color]))
+		Object.fromEntries(colors?.entries().map(([card, color]) => [card.value, color]))
 	);
 
 	function swapColors(color1: category, color2: category) {
@@ -154,24 +154,24 @@
 					animate:flip={{ duration: 750 }}
 					class={[
 						'word-square aspect-1 relative rounded border text-center select-none',
-						colorsObj[card.value] === 'white' && 'bg-white dark:bg-gray-950',
-						colorsObj[card.value] === 'purple' && 'bg-purple-500',
-						colorsObj[card.value] === 'blue' && 'bg-blue-500',
-						colorsObj[card.value] === 'green' && 'bg-green-500',
-						colorsObj[card.value] === 'yellow' && 'bg-yellow-500'
+						colorsObj?.[card.value] === 'white' && 'bg-white dark:bg-gray-950',
+						colorsObj?.[card.value] === 'purple' && 'bg-purple-500',
+						colorsObj?.[card.value] === 'blue' && 'bg-blue-500',
+						colorsObj?.[card.value] === 'green' && 'bg-green-500',
+						colorsObj?.[card.value] === 'yellow' && 'bg-yellow-500'
 					]}
 				>
 					{#each ['purple', 'blue', 'green', 'yellow'] as const as color}
 						<button
 							onclick={() => colors.set(card, colors.get(card) === color ? 'white' : color)}
-							disabled={colorCounts[color] >= 4 && colorsObj[card.value] !== color}
+							disabled={colorCounts[color] >= 4 && colorsObj?.[card.value] !== color}
 							title={`Toggle ${color}`}
-							style={`grid-area: ${colorsObj[card.value] === color ? 'none' : color}`}
+							style={`grid-area: ${colorsObj?.[card.value] === color ? 'none' : color}`}
 							class={[
 								'invisible absolute h-full w-full cursor-pointer',
-								colorsObj[card.value] === 'white' && 'visible',
+								colorsObj?.[card.value] === 'white' && 'visible',
 								'disabled:cursor-default disabled:opacity-40',
-								colorsObj[card.value] === color
+								colorsObj?.[card.value] === color
 									? 'grid-area-none visible z-2 col-span-full row-span-full h-full w-full bg-transparent outline-none'
 									: (color === 'purple' && 'bg-purple-500') ||
 										(color === 'blue' && 'bg-blue-500') ||
@@ -188,7 +188,7 @@
 								<span
 									class={[
 										'block w-min rounded px-0.5',
-										colorsObj[card.value] === 'white' && 'bg-gray-300 dark:bg-gray-700'
+										colorsObj?.[card.value] === 'white' && 'bg-gray-300 dark:bg-gray-700'
 									]}>{part}</span
 								>
 							{/each}
