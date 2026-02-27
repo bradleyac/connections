@@ -1,12 +1,14 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import PopoverMenuButton from '$lib/components/PopoverMenuButton.svelte';
+	import type { ConnectionsCard } from '$lib/types.js';
 	import { flip } from 'svelte/animate';
+	import { SvelteMap } from 'svelte/reactivity';
 
 	let { data } = $props();
 	type category = 'yellow' | 'green' | 'blue' | 'purple' | 'white';
 	const categories = ['purple', 'blue', 'green', 'yellow', 'white'] as category[];
-	let colors = $state({} as Record<string, category>);
+	let colors = $state(new SvelteMap<ConnectionsCard, category>());
 	let colorCounts = $derived.by(() => {
 		const counts: Record<category, number> = {
 			purple: 0,
@@ -15,26 +17,28 @@
 			yellow: 0,
 			white: 0
 		};
-		for (const color of Object.values(colors)) {
+		for (const color of colors.values?.() || []) {
 			counts[color] = (counts[color] || 0) + 1;
 		}
 		return counts;
 	});
 
-	function ofColors(ofColors: category[]) {
-		return Object.entries(colors)
+	function ofColors(ofColors: category[]): ConnectionsCard[] {
+		return colors
+			.entries()
 			.filter(([_, c]) => ofColors.includes(c))
-			.map(([word]) => word);
+			.map(([word]) => word)
+			.toArray();
 	}
-	let unfinishedOrUncategorizedWords = $derived(
+	let unfinishedOrUncategorizedCards = $derived(
 		ofColors(
 			Object.entries(colorCounts)
 				.filter(([color, count]) => color === 'white' || count !== 4)
 				.map(([color, count]) => color as category)
 		)
 	);
-	let words = $derived.by(() => {
-		let temp = unfinishedOrUncategorizedWords;
+	let cards = $derived.by(() => {
+		let temp = unfinishedOrUncategorizedCards;
 		const rowLocations = [
 			['purple', 0],
 			['blue', 4],
@@ -50,15 +54,19 @@
 	});
 
 	$effect(() => {
-		colors = Object.fromEntries(data.connections.map((word) => [word, 'white']));
+		colors = new SvelteMap(data.connections.map((word) => [word, 'white']));
 	});
 
+	let colorsObj = $derived(
+		Object.fromEntries(colors.entries().map(([card, color]) => [card.value, color]))
+	);
+
 	function swapColors(color1: category, color2: category) {
-		for (const word of Object.keys(colors)) {
-			if (color1 !== 'white' && colors[word] === color1) {
-				colors[word] = color2;
-			} else if (color2 !== 'white' && colors[word] === color2) {
-				colors[word] = color1;
+		for (const word of colors.keys()) {
+			if (color1 !== 'white' && colors.get(word) === color1) {
+				colors.set(word, color2);
+			} else if (color2 !== 'white' && colors.get(word) === color2) {
+				colors.set(word, color1);
 			}
 		}
 	}
@@ -78,14 +86,10 @@
 		<div class="flex gap-5">
 			<button
 				title="Clear"
-				onclick={() =>
-					(colors = Object.fromEntries(data.connections.map((word) => [word, 'white'])) as Record<
-						string,
-						category
-					>)}
+				onclick={() => (colors = new SvelteMap(data.connections.map((word) => [word, 'white'])))}
 				class="rounded bg-gray-100 bg-gray-200 px-4 py-2 dark:bg-gray-800">Clear</button
 			>
-			{#each Object.entries(colorCounts).filter(([color, count]) => color !== 'white') as [color, count]}
+			{#each Object.entries(colorCounts).filter(([color, _]) => color !== 'white') as [color, count]}
 				<PopoverMenuButton
 					bind:opened
 					id={color}
@@ -145,29 +149,29 @@
 			{/each}
 		</div>
 		<div class="grid aspect-square w-full max-w-[25rem] grid-cols-4 grid-rows-4 gap-2">
-			{#each words as word (word)}
+			{#each cards as card (card)}
 				<div
 					animate:flip={{ duration: 750 }}
 					class={[
 						'word-square aspect-1 relative rounded border text-center select-none',
-						colors[word] === 'white' && 'bg-white dark:bg-gray-950',
-						colors[word] === 'purple' && 'bg-purple-500',
-						colors[word] === 'blue' && 'bg-blue-500',
-						colors[word] === 'green' && 'bg-green-500',
-						colors[word] === 'yellow' && 'bg-yellow-500'
+						colorsObj[card.value] === 'white' && 'bg-white dark:bg-gray-950',
+						colorsObj[card.value] === 'purple' && 'bg-purple-500',
+						colorsObj[card.value] === 'blue' && 'bg-blue-500',
+						colorsObj[card.value] === 'green' && 'bg-green-500',
+						colorsObj[card.value] === 'yellow' && 'bg-yellow-500'
 					]}
 				>
 					{#each ['purple', 'blue', 'green', 'yellow'] as const as color}
 						<button
-							onclick={() => (colors[word] = colors[word] === color ? 'white' : color)}
-							disabled={colorCounts[color] >= 4 && colors[word] !== color}
+							onclick={() => colors.set(card, colors.get(card) === color ? 'white' : color)}
+							disabled={colorCounts[color] >= 4 && colorsObj[card.value] !== color}
 							title={`Toggle ${color}`}
-							style={`grid-area: ${colors[word] === color ? 'none' : color}`}
+							style={`grid-area: ${colorsObj[card.value] === color ? 'none' : color}`}
 							class={[
 								'invisible absolute h-full w-full cursor-pointer',
-								colors[word] === 'white' && 'visible',
-								'disabled:invisible',
-								colors[word] === color
+								colorsObj[card.value] === 'white' && 'visible',
+								'disabled:cursor-default disabled:opacity-40',
+								colorsObj[card.value] === color
 									? 'grid-area-none visible z-2 col-span-full row-span-full h-full w-full bg-transparent outline-none'
 									: (color === 'purple' && 'bg-purple-500') ||
 										(color === 'blue' && 'bg-blue-500') ||
@@ -176,18 +180,25 @@
 							]}
 						></button>
 					{/each}
-					<div
-						class="inert z-1 col-span-full row-span-full flex flex-col items-center gap-0.5 place-self-center text-xs"
-					>
-						{#each word.split(' ') as part}
-							<span
-								class={[
-									'block w-min rounded px-0.5',
-									colors[word] === 'white' && 'bg-gray-300 dark:bg-gray-700'
-								]}>{part}</span
-							>
-						{/each}
-					</div>
+					{#if card.type === 'word'}
+						<div
+							class="pointer-events-none z-1 col-span-full row-span-full flex flex-col items-center gap-0.5 place-self-center text-xs"
+						>
+							{#each card.value.split(' ') as part}
+								<span
+									class={[
+										'block w-min rounded px-0.5',
+										colorsObj[card.value] === 'white' && 'bg-gray-300 dark:bg-gray-700'
+									]}>{part}</span
+								>
+							{/each}
+						</div>
+					{:else if card.type === 'image'}
+						<div
+							class="pointer-events-none z-1 col-span-full row-span-full flex flex-col items-center gap-0.5 place-self-center"
+						>
+							<img class="w-full" src={card.value} alt="" />
+						</div>{/if}
 				</div>
 			{/each}
 		</div>
@@ -202,5 +213,9 @@
 			'purple blue' 1fr
 			'green yellow' 1fr / 1fr 1fr;
 		overflow: hidden;
+	}
+
+	svg {
+		fill: currentColor;
 	}
 </style>
