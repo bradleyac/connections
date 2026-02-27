@@ -14,6 +14,5 @@ export async function fetchConnections(date: string): Promise<ConnectionsCard[]>
     .filter(Boolean)]
     .toSorted((a, b) => a.position - b.position);
 
-  console.log(result);
   return result;
 }
