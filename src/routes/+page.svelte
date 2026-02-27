@@ -25,7 +25,7 @@
 
 	function ofColors(ofColors: category[]): ConnectionsCard[] {
 		return colors
-			.entries()
+			?.entries()
 			.filter(([_, c]) => ofColors.includes(c))
 			.map(([word]) => word)
 			.toArray();
