@@ -71,6 +71,13 @@
 		}
 	}
 
+	function fontSizeClass(words: string) {
+		const maxWordLength = words
+			.split(' ')
+			.reduce((acc, cur) => (cur.length > acc.length ? cur : acc)).length;
+		return maxWordLength > 10 ? 'text-[8.5px]' : 'text-xs';
+	}
+
 	let opened = $state<string | null>(null);
 </script>
 
@@ -182,7 +189,10 @@
 					{/each}
 					{#if card.type === 'word'}
 						<div
-							class="pointer-events-none z-1 col-span-full row-span-full flex flex-col items-center gap-0.5 place-self-center text-xs"
+							class={[
+								'pointer-events-none z-1 col-span-full row-span-full flex flex-col items-center gap-0.5 place-self-center',
+								fontSizeClass(card.value)
+							]}
 						>
 							{#each card.value.split(' ') as part}
 								<span
